@@ -5,14 +5,24 @@ const TABS=[['الرئيسية',0],['الأهداف',1],['المحتوى',2],['�
 let st={i:0,a1:0,a2:{p:{},sel:null,done:0},a3:{n:0,sc:0},q:{fin:0,wg:0},snd:1,demo:null,open:{},rv:0,a4:{seq:[],done:0},sn:{},dv:[0,0],hs:{}};
 try{Object.assign(st,JSON.parse(sessionStorage.getItem('pw5')||'{}'))}catch(e){}
 const save=()=>{try{sessionStorage.setItem('pw5',JSON.stringify(st))}catch(e){}};
-let ac,clapB;
-function mkClap(c){const sr=c.sampleRate,n=sr*1.5|0,b=c.createBuffer(1,n,sr),d=b.getChannelData(0),T=[];for(let k=0;k<55;k++)T.push(Math.random()*1.2);for(let i=0;i<n;i++){const t=i/sr;let e=0;for(const x of T){const q=t-x;if(q>0&&q<.07)e+=Math.exp(-q*70)}d[i]=(Math.random()*2-1)*Math.min(e,1)*(t>1.1?Math.max(0,(1.5-t)/.4):1)}return b}
+let ac;
 function tone(c,f,t0,dur,type,vol,f2){const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+t0);if(f2)o.frequency.linearRampToValueAtTime(f2,c.currentTime+t0+dur);g.gain.setValueAtTime(vol,c.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t0+dur);o.connect(g);g.connect(c.destination);o.start(c.currentTime+t0);o.stop(c.currentTime+t0+dur+.02)}
-const beepSynth=ok=>{if(!st.snd)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state=='suspended')ac.resume();
-if(ok){[523,659,784].forEach((f,k)=>tone(ac,f,k*.1,.35,'sine',.12));clapB=clapB||mkClap(ac);const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=clapB;f.type='bandpass';f.frequency.value=2200;f.Q.value=.6;g.gain.value=.9;s.connect(f);f.connect(g);g.connect(ac.destination);s.start(ac.currentTime+.2)}
-else{tone(ac,190,0,.28,'sawtooth',.1,140);tone(ac,140,.3,.4,'sawtooth',.1,90)}}catch(e){}};
-const APPLAUSE_FILE=true; // Small Group Crowd Applause 58, SFXMint (CC0), trimmed to 2.2 seconds.
-const beep=ok=>{if(!st.snd)return;if(!ok||!APPLAUSE_FILE){beepSynth(ok);return}let fb=0;const fall=()=>{if(!fb){fb=1;beepSynth(1)}};try{const a=new Audio('game-applause.wav');a.volume=.7;a.onerror=fall;a.play().catch(e=>{if(!e||e.name!='NotAllowedError')fall()});setTimeout(()=>a.pause(),3500)}catch(e){fall()}};
+const applause = document.getElementById("correct-answer-sound");
+applause.volume = 0.7;
+function beep(ok) {
+  if (!st.snd) return;
+  if (ok) {
+    applause.currentTime = 0;
+    applause.play().catch(() => {});
+    return;
+  }
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state === "suspended") ac.resume();
+    tone(ac, 190, 0, 0.28, "sawtooth", 0.1, 140);
+    tone(ac, 140, 0.3, 0.4, "sawtooth", 0.1, 90);
+  } catch (e) {}
+}
 const L=t=>`<span dir="ltr" class="pw" style="display:inline-block;padding:calc(.2*var(--u)) calc(.8*var(--u))">${t}</span>`;
 function modal(ok,title,txt,btn,cb){const m=$('#mod');m.className='mod '+(ok?'ok':'bad');m.innerHTML=`<div class="ic">${ok===2?'ℹ️':ok?'✅':'💡'}</div><h2>${title}</h2><p>${txt}</p><br><button class="btn" id="mb">${btn}</button>`;$('#ov').hidden=false;if(ok!==2)beep(ok);$('#mb').focus();$('#mb').onclick=()=>{$('#ov').hidden=true;cb&&cb()}}
 const T=['A','m','7','#','k','9','B','Q','r','@','Ali','2015'];
