@@ -11,8 +11,8 @@ function tone(c,f,t0,dur,type,vol,f2){const o=c.createOscillator(),g=c.createGai
 const beepSynth=ok=>{if(!st.snd)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state=='suspended')ac.resume();
 if(ok){[523,659,784].forEach((f,k)=>tone(ac,f,k*.1,.35,'sine',.12));clapB=clapB||mkClap(ac);const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=clapB;f.type='bandpass';f.frequency.value=2200;f.Q.value=.6;g.gain.value=.9;s.connect(f);f.connect(g);g.connect(ac.destination);s.start(ac.currentTime+.2)}
 else{tone(ac,190,0,.28,'sawtooth',.1,140);tone(ac,140,.3,.4,'sawtooth',.1,90)}}catch(e){}};
-const APPLAUSE_FILE=false; // اجعلها true بعد وضع applause.mp3
-const beep=ok=>{if(!st.snd)return;if(!ok||!APPLAUSE_FILE){beepSynth(ok);return}let fb=0;const fall=()=>{if(!fb){fb=1;beepSynth(1)}};try{const a=new Audio('applause.mp3');a.volume=.7;a.onerror=fall;a.play().catch(e=>{if(!e||e.name!='NotAllowedError')fall()});setTimeout(()=>a.pause(),3500)}catch(e){fall()}};
+const APPLAUSE_FILE=true; // Small Group Crowd Applause 58, SFXMint (CC0), trimmed to 2.2 seconds.
+const beep=ok=>{if(!st.snd)return;if(!ok||!APPLAUSE_FILE){beepSynth(ok);return}let fb=0;const fall=()=>{if(!fb){fb=1;beepSynth(1)}};try{const a=new Audio('game-applause.wav');a.volume=.7;a.onerror=fall;a.play().catch(e=>{if(!e||e.name!='NotAllowedError')fall()});setTimeout(()=>a.pause(),3500)}catch(e){fall()}};
 const L=t=>`<span dir="ltr" class="pw" style="display:inline-block;padding:calc(.2*var(--u)) calc(.8*var(--u))">${t}</span>`;
 function modal(ok,title,txt,btn,cb){const m=$('#mod');m.className='mod '+(ok?'ok':'bad');m.innerHTML=`<div class="ic">${ok===2?'ℹ️':ok?'✅':'💡'}</div><h2>${title}</h2><p>${txt}</p><br><button class="btn" id="mb">${btn}</button>`;$('#ov').hidden=false;if(ok!==2)beep(ok);$('#mb').focus();$('#mb').onclick=()=>{$('#ov').hidden=true;cb&&cb()}}
 const T=['A','m','7','#','k','9','B','Q','r','@','Ali','2015'];
