@@ -97,3 +97,29 @@ nav button { font-size: 1rem; padding: .3rem .7rem; }
   .hero { min-height: 0; }
   .hero img { max-height: 8rem; object-fit: contain; }
 }
+
+.lesson-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .55rem 1rem;
+  margin-bottom: 1rem;
+}
+.lesson-heading :is(h1,h2) { margin: 0; }
+#aud.listen-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .45rem 1rem;
+  border-radius: .65rem;
+  background: #104f95;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+}
+#aud.listen-button:hover { background: #0b386d; }
+@media (max-width: 700px) {
+  .lesson-heading { align-items: flex-start; flex-direction: column; }
+  .hero .lesson-heading { align-items: center; }
+}

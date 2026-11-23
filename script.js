@@ -69,9 +69,10 @@ const WG=()=>`<h2>📝 التقويم الختامي</h2><div class="g2" style="
 const lockSvg=o=>`<img alt="" src="${o?'lock-open':'lock-closed'}.svg" style="width:calc(12*var(--u))">`;
 const AUD={home:'home',what:'what',props:'props',a4:'create',end:'end'};let au=null;
 const asrc=v=>(window.AUDIO_DATA&&AUDIO_DATA[v])||''+v+'.m4a';
-function stopAu(){if(au){au.pause();au=null}const b=$('#aud');if(b)b.textContent='🔊 استمع'}
+function stopAu(){if(au){au.pause();au=null}setListenLabel()}
+function setListenLabel(){const button=$('#aud');if(button)button.textContent=au?'⏹ إيقاف الشرح':'🔊 استمع إلى الشرح'}
 function go(i){i=Math.max(0,Math.min(13,i));if(i!==st.i&&can(i))stopAu();if(!can(i)){modal(0,'أكمل هذه الشاشة أولًا','لا يمكنك الانتقال قبل إكمال التعلّم والنشاط في الشاشة الحالية.','حسنًا');return}st.i=i;save();r()}
-function r(){const ab=$('#aud'),f=AUD[SC[st.i][0]];ab.hidden=!f;ab.dataset.v=f||'';ab.textContent=au?'⏹ إيقاف':'🔊 استمع';const g=SC[st.i][1];$('#tabs').innerHTML=TABS.map((t,k)=>`<button data-a="go" data-v="${t[1]}" class="${k==g?'on':''}">${t[0]}</button>`).join('');$('#screen').innerHTML=V[SC[st.i][0]]();{const on=document.querySelector('#tabs .on');if(on)try{on.scrollIntoView({inline:'center',block:'nearest'})}catch(e){}}$('#bar').style.width=(st.i+1)/14*100+'%';$('#pt').textContent=`${st.i+1} / 14`+(ok(st.i)?'':' – أكمل للمتابعة');$('#prev').disabled=st.i==0;$('#next').disabled=st.i==13||!ok(st.i);save()}
+function r(){const recording=AUD[SC[st.i][0]];const g=SC[st.i][1];$('#tabs').innerHTML=TABS.map((t,k)=>`<button data-a="go" data-v="${t[1]}" class="${k==g?'on':''}">${t[0]}</button>`).join('');$('#screen').innerHTML=V[SC[st.i][0]]();if(recording){const heading=$('#screen h1, #screen h2');const row=document.createElement('div');row.className='lesson-heading';heading.before(row);row.append(heading);const button=document.createElement('button');button.id='aud';button.className='listen-button';button.dataset.a='play';button.dataset.v=recording;row.append(button);setListenLabel()}{const on=document.querySelector('#tabs .on');if(on)try{on.scrollIntoView({inline:'center',block:'nearest'})}catch(e){}}$('#bar').style.width=(st.i+1)/14*100+'%';$('#pt').textContent=`${st.i+1} / 14`+(ok(st.i)?'':' – أكمل للمتابعة');$('#prev').disabled=st.i==0;$('#next').disabled=st.i==13||!ok(st.i);save()}
 function put(k){const s=st.a2;if(s.sel===null)return;s.done=0;s.p[s.sel]=k;s.sel=null;r()}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t||t.disabled)return;const a=t.dataset.a,v=t.dataset.v;
 if(a=='go')go(+v);else if(a=='next')go(st.i+1);else if(a=='prev')go(st.i-1);
@@ -85,7 +86,12 @@ else if(a=='tile'){st.a4.done=0;st.a4.seq.push(+v);r()}else if(a=='rm'){st.a4.do
 else if(a=='chk4'){const miss=missingRules();st.a4.done=0;if(!miss.length){st.a4.done=1;modal(1,'إجابة صحيحة! أحسنت','كلمتك طويلة ومتنوعة وصعبة التخمين وليس فيها معلومات شخصية.','متابعة',r)}else modal(0,'إجابة خاطئة! حاول مرة أخرى','تلميح: ينقصك: '+miss.map(c=>c[0]).join('، '),'إعادة المحاولة')}
 else if(a=='rs3'){st.a3={n:0,sc:0};r()}
 else if(a=='hint'){st.hs[v]=1;r()}else if(a=='wgo'){st.q.wg=1;save();setTimeout(r,60)}else if(a=='wgdone'){st.q.fin=1;go(13)}else if(a=='help'){modal(2,'مساعدة',(HELP[SC[st.i][0]]||'اضغط «التالي» للمتابعة.')+' يُفتح زر «التالي» بعد إكمال الشاشة، ويمكنك العودة بزر «السابق».','حسنًا')}
-else if(a=='play'){if(au){stopAu();t.textContent='🔊 استمع';return}au=new Audio(asrc(v));t.textContent='⏹ إيقاف';au.onended=()=>{au=null;$('#aud').textContent='🔊 استمع'};au.onerror=()=>{au=null;t.hidden=true};au.play().catch(()=>{au=null;t.textContent='🔊 استمع'})}
+else if(a=='play'){
+  if(au){stopAu();return}
+  const recording=new Audio(asrc(v));au=recording;setListenLabel();
+  const finished=()=>{if(au===recording){au=null;setListenLabel()}};
+  recording.onended=finished;recording.onerror=finished;recording.play().catch(finished)
+}
 else if(a=='redo'){const s=st.snd;st={i:0,a1:0,a2:{p:{},sel:null,done:0},a3:{n:0,sc:0},q:{fin:0,wg:0},snd:s,demo:null,open:{},rv:0,a4:{seq:[],done:0},sn:{},dv:[0,0],hs:{}};r()}
 else if(a=='rv'){st.rv=1;r()}});
 document.addEventListener('dragstart',e=>{const t=e.target.closest('.pw[data-id]');if(t){st.a2.sel=+t.dataset.id;e.dataTransfer.setData('text','x')}});
