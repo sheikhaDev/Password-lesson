@@ -111,10 +111,16 @@ nav button { font-size: 1rem; padding: .3rem .7rem; }
   font-weight: 700;
 }
 #aud.listen-button:hover { background: #0b386d; }
-.stage { grid-template-rows: auto auto minmax(0, 1fr) auto; }
-.audio-row { padding-inline: clamp(.9rem, 2.4vw, 2.5rem); text-align: start; }
-.audio-row .listen-button { margin-top: .65rem; }
-#aud.listen-button[hidden] { display: none; }
+.stage { grid-template-rows: auto minmax(0, 1fr) auto auto; }
+.audio-row { width: 100%; }
+.audio-row #aud {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 0;
+  margin: 0;
+}
+.audio-row #aud[hidden] { display: none; }
 @media (max-height: 480px) {
-  .stage { grid-template-rows: auto auto 1fr auto; }
+  .stage { grid-template-rows: auto 1fr auto auto; }
 }
