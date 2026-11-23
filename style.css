@@ -98,14 +98,6 @@ nav button { font-size: 1rem; padding: .3rem .7rem; }
   .hero img { max-height: 8rem; object-fit: contain; }
 }
 
-.lesson-heading {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: .55rem 1rem;
-  margin-bottom: 1rem;
-}
-.lesson-heading :is(h1,h2) { margin: 0; }
 #aud.listen-button {
   display: inline-flex;
   align-items: center;
@@ -119,7 +111,10 @@ nav button { font-size: 1rem; padding: .3rem .7rem; }
   font-weight: 700;
 }
 #aud.listen-button:hover { background: #0b386d; }
-@media (max-width: 700px) {
-  .lesson-heading { align-items: flex-start; flex-direction: column; }
-  .hero .lesson-heading { align-items: center; }
+.stage { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.audio-row { padding-inline: clamp(.9rem, 2.4vw, 2.5rem); text-align: start; }
+.audio-row .listen-button { margin-top: .65rem; }
+#aud.listen-button[hidden] { display: none; }
+@media (max-height: 480px) {
+  .stage { grid-template-rows: auto auto 1fr auto; }
 }
